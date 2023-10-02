@@ -1,0 +1,117 @@
+/*Si consideri una lista definita come sotto che contiene i punti ottenuti da clienti durante vari acquisti (ovviamente lo stesso cliente, quindi lo stesso codice, sarà presente più volte nella lista)
+ 
+typedef struct nodo{
+    char codice[100];
+    int punteggio;
+    struct nodo * next;
+} nodo;
+typedef nodo * Lista;
+ 
+Scrivere una funzione aggrega che, data una lista di nodi, genera una nuova lista con la stessa struttura, ma in cui ogni codice appare una volta sola avendo come punteggio la somma dei punteggi dei nodi della lista di partenza.
+ 
+Coi dati del main allegato verrà generata una lista contenente i seguenti elementi (non importa in che ordine)
+(c1,764) --->  (c2,882) --->  (c3,834) --->  (c4,634) --->  (c5,661) --->  ---|
+
+Si parta da questo file:
+https://www.dropbox.com/s/cga3r22s1ea5ggc/listeTesto.c?dl=0 */
+
+
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+
+typedef struct n{
+    char codice[100];
+    int punteggio;
+    struct n * next;
+} nodo;
+typedef nodo * Lista;
+
+Lista InsInFondo(Lista lista,char c[],int p);
+void VisualizzaLista(Lista lista );
+Lista costruisci();
+Lista caux(Lista lista,int i);
+//
+// TODO: PROTOTIPI DELLE FUNZIONI RICHIESTE
+//
+int controllaSeGiaInLista(Lista new,char str[]);
+int esploraLista(Lista lis,char str[]);
+Lista aggrega(Lista lis);
+
+int main(){
+    Lista lis,risultato;
+    lis=costruisci();
+    VisualizzaLista(lis);
+    printf("\n\n");
+
+    //TODO: invocazione funzione e visualizzazione risultato
+    risultato=aggrega(lis);
+    VisualizzaLista(risultato);
+    return 0;
+}
+//
+// TODO: SVILUPPARE QUI LE FUNZIONI RICHIESTE
+//
+Lista aggrega(Lista lis)
+{
+    int sum=0;
+    Lista nuova=NULL;
+    if(lis==NULL)
+        return NULL;
+    while (lis!=NULL) {
+        sum=0;
+        if(controllaSeGiaInLista(nuova, lis->codice)!=0){
+            sum=esploraLista(lis, lis->codice);
+            nuova=InsInFondo(nuova, lis->codice, sum);
+        }
+        lis=lis->next;
+    }
+    return nuova;
+}
+Lista InsInFondo(Lista lista,char c[],int p) {
+    Lista punt;
+    if( lista==NULL ) {
+        punt = malloc( sizeof(nodo) );
+        punt->next = NULL;
+        punt->punteggio = p;
+        strcpy(punt->codice, c);
+        return punt;
+    }
+    else { lista->next = InsInFondo( lista->next, c,p );
+        return lista;
+    }
+}
+int controllaSeGiaInLista(Lista new,char str[])
+{//restituisce 1 se non c'è già, 0 altrimenti.
+    if(new==NULL)
+        return 1;
+    while (new!=NULL) {
+        if(strcmp(new->codice, str)==0)
+            return 0;
+        new=new->next;
+    }
+    return 1;
+}
+int esploraLista(Lista lis,char str[])
+{
+    int sum=0;
+    if(lis==NULL)
+        return 0;
+    while (lis!=NULL) {
+        if(strcmp(lis->codice, str)==0)
+            sum+=lis->punteggio;
+        lis=lis->next;
+    }
+    return sum;
+}
+Lista costruisci(){ return caux(NULL,0);}
+Lista caux(Lista lista,int i){
+    int p[50]={57, 63, 70, 88, 91, 97, 57, 59, 66, 88, 94, 92, 77, 61, 68, 75, 85, 94, 68, 77, 63, 89, 85, 100, 57, 77, 59, 97, 68, 60, 87, 92, 94, 66, 61, 68, 75, 63, 89, 68, 75, 94, 57, 63, 75, 66, 92, 61, 77, 70};
+    char c[50][20]={"c2", "c1", "c3", "c1", "c5", "c2", "c5", "c4", "c5", "c1", "c3", "c4", "c4", "c5", "c1", "c5", "c2", "c2", "c5", "c2", "c3", "c1", "c5", "c3", "c1", "c3", "c3", "c2", "c2", "c1", "c3", "c3", "c1", "c4", "c3", "c4", "c4", "c4", "c1", "c1", "c2", "c2", "c4", "c2", "c2", "c5", "c5", "c3", "c4", "c3"};
+    if(i==50) return NULL;
+    lista= (Lista)malloc( sizeof(nodo) );    lista->codice[0]=c[i][0]; lista->codice[1]=c[i][1]; lista->codice[2]=c[i][2]; lista->punteggio = p[i];    lista->next = caux(lista->next,i+1); return lista;
+}
+void VisualizzaLista(Lista lista ){
+    if (lista==NULL) printf(" ---| \n");
+    else{printf(" (%s,%i) ---> ", lista->codice, lista->punteggio); VisualizzaLista( lista->next );}
+}
