@@ -1,0 +1,34 @@
+Si consideri il seguente schema, relativo ad una catena di piscine pubbliche (i campi tutto maiuscolo sono le chiavi delle tabelle).
+
+CLIENTE (CFCLIENTE, Nome, Cognome, Città, Data_Nascita)
+PISCINA (IDPISCINA, Nome, Indirizzo, Città, Data_Inaugurazione)
+BIGLIETTO (CFCLIENTE, IDPISCINA, DATAINGRESSO)
+
+Scrivere una query in SQL che estrae CF, Nome e Cognome dei clienti che non sono mai andati in piscine della loro città.
+
+Scrivere una query in SQL che estrae CF, Nome e Cognome dei clienti di Milano che hanno frequentato almeno una volta tutte le piscine di Milano.
+
+
+
+ 
+ SELECT C.CFCliente,C.Nome,C.Cognome
+ FROM Cliente as C,Piscina as P,Biglietto as B
+ WHERE C.CfCliente=B.CfCliente AND
+             P.IdPiscina=B.IdPiscina AND
+             B.IdPiscina NOT IN (SELECT P2.IdPiscina
+                                    FROM Piscina as P2
+                                    WHERE P2.Città=C.Città)
+ GROUP BY C.CFCliente
+ 
+ Scrivere una query in SQL che estrae CF, Nome e Cognome dei clienti di Milano che hanno frequentato almeno una volta tutte le piscine di Milano.
+
+ SELECT C.CFCliente,C.Nome,C.Cognome
+ FROM Cliente as C,Biglietto as B,Piscina as P
+ WHERE C.CFCliente=B.CFCliente AND
+            B.IdPiscina=P.IdPiscina AND
+            C.Città='Milano' AND
+            P.Città='Milano
+ GROUP BY C.CFCliente
+ HAVING count(*)=(SELECT Count(IdPiscina)//essendo una chiave non ho messo Distinct.
+                             FROM Piscina
+                             WHERE Città='Milano')
