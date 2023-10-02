@@ -1,0 +1,125 @@
+/*3.Si consideri la seguente definizione di un albero binario
+
+typedef struct t { 
+    int val;
+    struct t * left, *right; 
+} Nodo;
+
+typedef Nodo * Tree;
+ 
+Scrivere una funzione percorsoMediaMinima che prende in ingresso un albero binario e calcolando, per ogni percorso dalla radice alle foglie, la media dei valori (nei nodi) che compongono il percorso restituisce un unico valore che rappresenta il minimo tra le medie dei valori di ciascun percorso. 
+ 
+Si consiglia molto fortemente l’uso di funzioni ausiliarie con parametri aggiuntivi che “trasportino” nelle chiamate informazioni utili.
+ 
+Con gli alberi di esempio del codice fornito l’output deve essere:
+Il percorso in T1 con media di valori minima ha media: 6.333333
+Il percorso in T2 con media di valori minima ha media: 6.500000
+Il percorso in T3 con media di valori minima ha media: 3.000000
+
+Si parta dal file:
+https://www.dropbox.com/s/3r5modkhaj55cx2/alberiTesto.c?dl=0 */
+
+
+
+#include <stdio.h>
+#include <stdlib.h>
+typedef struct n {
+    int val;
+    struct n *left;
+    struct n *right;
+} nodo;
+typedef nodo *albero;
+
+albero createVal(int val);
+albero creaAlbero1(void);
+albero creaAlbero2(void);
+albero creaAlbero3(void);
+
+void print(albero t);
+void stampa(albero T);
+float costoMinimoMedio(albero T);
+float trovoMedia(albero t,float media,float cont);
+
+int main() {
+    albero T1, T2, T3;
+    T1 = creaAlbero1();
+    T2 = creaAlbero2();
+    T3 = creaAlbero3();
+    printf("\nT1: ");
+    stampa(T1);
+    printf("\nT2: ");
+    stampa(T2);
+    printf("\nT3: ");
+    stampa(T3);
+    // visualizzazione risultati e invocazione funzione
+    printf("Il percorso di T1 con media di valori minima ha media: %f\n", costoMinimoMedio(T1));
+    printf("Il percorso di T2 con media di valori minima ha media: %f\n", costoMinimoMedio(T2));
+    printf("Il percorso di T3 con media di valori minima ha media: %f\n", costoMinimoMedio(T3));
+
+    return 0;
+}
+float costoMinimoMedio(albero T){
+    if(T==NULL)
+        return 0;
+    return trovoMedia(T, 0, 0);
+}
+float trovoMedia(albero t,float media,float cont)
+{
+    float d,s;
+    if(t==NULL)
+        return media/cont;
+    d=trovoMedia(t->right, media+t->val, cont+1);
+    s=trovoMedia(t->left, media+t->val, cont+1);
+    if(d<s)
+        return d;
+    return s;
+}
+albero creaAlbero1() {
+    albero tmp = createVal(7);
+    tmp->left = createVal(3);
+    tmp->left->left = createVal(9);
+    tmp->left->right = createVal(10);
+    tmp->right = createVal(8);
+    tmp->right->left = createVal(5);
+    tmp->right->right = createVal(12);
+    tmp->right->right->left = createVal(11);
+    tmp->right->right->right = createVal(6);
+    return tmp;
+}
+albero creaAlbero2() {
+    albero tmp = createVal(8);
+    tmp->left = createVal(5);
+    tmp->right = createVal(12);
+    tmp->right->left = createVal(11);
+    tmp->right->right = createVal(6);
+    return tmp;
+}
+albero creaAlbero3() {
+    albero tmp = createVal(8);
+    tmp->left = createVal(5);
+    tmp->right = createVal(0);
+    tmp->right->left = createVal(1);
+    tmp->right->right = createVal(5);
+    return tmp;
+}
+void print(albero t) {
+    if (t == NULL)return;
+    else {
+        printf(" (");
+        print(t->left);
+        printf(" %d ", t->val);
+        print(t->right);
+        printf(") ");
+    }
+}
+void stampa(albero T) {
+    print(T);
+    printf("\n");
+}
+albero createVal(int val) {
+    albero tmp = (albero)malloc(sizeof(nodo));
+    tmp->val = val;
+    tmp->left = NULL;
+    tmp->right = NULL;
+    return tmp;
+}
