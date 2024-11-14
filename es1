@@ -31,10 +31,6 @@ https://www.dropbox.com/s/l23jpc8mln2oz7k/stringheTesto.c?dl=0*/
 
 
 
-
-
-
-
 #include<stdio.h>
 #include<string.h>
 #define N 100
